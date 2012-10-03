@@ -4,8 +4,11 @@ public class Brahma {
 	static PluginManager pluginManager;
 	public static void main(String args[]) {
 		PluginCore core = new PluginCore();
-		try {
+		try 
+		{
 			pluginManager = new PluginManager(core);
+			core.addAddActionListener(pluginManager.AddListener());
+			core.addRemoveActionListener(pluginManager.RemoveListener());
 		}
 		catch(Exception e) {
 			e.printStackTrace();

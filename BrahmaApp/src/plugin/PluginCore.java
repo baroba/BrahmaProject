@@ -4,6 +4,9 @@ import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.EventQueue;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.io.File;
 import java.util.HashMap;
 
 import javax.swing.*;
@@ -18,12 +21,14 @@ public class PluginCore {
 	private JList sideList;
 	private DefaultListModel<String> listModel;
 	private JPanel centerEnvelope;
-	
+	private final JButton addButton = new JButton("Add Plugin");
+	private final JButton removeButton = new JButton("Remove Plugin"); 
 	// For holding registered plugin
 	private HashMap<String, Plugin> idToPlugin;
 	private Plugin currentPlugin;
-
-	public PluginCore() {
+	
+	public PluginCore() 
+	{
 		idToPlugin = new HashMap<String, Plugin>();
 		
 		// Lets create the elements that we will need
@@ -39,6 +44,11 @@ public class PluginCore {
 		contentPane.add(sidePanel(), BorderLayout.EAST);
 		contentPane.add(bottomLabel, BorderLayout.SOUTH);
 		
+		JPanel bottomPanel = new JPanel(); 
+		bottomPanel.add(addButton);
+		bottomPanel.add(removeButton); 
+		contentPane.add(bottomPanel, BorderLayout.PAGE_END); 
+		
 
 	}
 	
@@ -51,7 +61,7 @@ public class PluginCore {
 			}
 		});
 	}
-	
+
 	public void stop() {
 		EventQueue.invokeLater(new Runnable() {
 			public void run()
@@ -61,13 +71,15 @@ public class PluginCore {
 		});
 	}
 	
-	public void addPlugin(Plugin plugin) {
+	public void addPlugin(Plugin plugin) 
+	{
 		this.idToPlugin.put(plugin.getId(), plugin);
 		this.listModel.addElement(plugin.getId());
 		this.bottomLabel.setText("The " + plugin.getId() + " plugin has been recently added!");
 	}
 	
-	public void removePlugin(String id) {
+	public void removePlugin(String id) 
+	{
 		Plugin plugin = this.idToPlugin.remove(id);
 		this.listModel.removeElement(id);
 		
@@ -76,7 +88,8 @@ public class PluginCore {
 
 		this.bottomLabel.setText("The " + plugin.getId() + " plugin has been recently removed!");
 	}
-	private JScrollPane sidePanel(){
+	private JScrollPane sidePanel()
+	{
 		listModel = new DefaultListModel<String>();
 		sideList = new JList(listModel);
 		sideList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
@@ -86,10 +99,35 @@ public class PluginCore {
 		sideList.getSelectionModel().addListSelectionListener(new sideListListener());
 		return scrollPane;
 	}
-	private JPanel centerEnvelope(){
+	private JPanel centerEnvelope()
+	{
 		centerEnvelope = new JPanel(new BorderLayout());
 		centerEnvelope.setBorder(BorderFactory.createLineBorder(Color.black, 5));
 		return centerEnvelope;
+	}
+	
+	public void addAddActionListener(ActionListener a)
+	{
+		addButton.addActionListener(a);
+	}
+	
+	public void addRemoveActionListener(ActionListener r)
+	{
+		removeButton.addActionListener(r); 
+	}
+	public JButton getAddButton()
+	{
+		return addButton; 
+	}
+	
+	public JButton getRemoveButton()
+	{
+		return removeButton; 
+	}
+	
+	public HashMap pluginMap()
+	{
+		return idToPlugin; 
 	}
 	
 	private class sideListListener implements ListSelectionListener {

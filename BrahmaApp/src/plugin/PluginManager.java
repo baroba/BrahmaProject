@@ -1,5 +1,7 @@
 package plugin;
 
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
@@ -11,11 +13,15 @@ import java.util.jar.Attributes;
 import java.util.jar.JarFile;
 import java.util.jar.Manifest;
 
+import javax.swing.JFileChooser;
+import javax.swing.JFrame;
+import javax.swing.JPanel;
+
 public class PluginManager implements Runnable {
 	private PluginCore core;
 	private WatchDir watchDir;
 	private HashMap<Path, Plugin> pathToPlugin;
-
+	private HashMap<String, Path> idToPath; 
 	public PluginManager(PluginCore core) throws IOException {
 		this.core = core;
 		this.pathToPlugin = new HashMap<Path, Plugin>();
@@ -62,15 +68,54 @@ public class PluginManager implements Runnable {
         Plugin plugin = (Plugin)pluginClass.newInstance();
         this.core.addPlugin(plugin);
         this.pathToPlugin.put(bundlePath, plugin);
-
+        this.idToPath.put(plugin.getId(), bundlePath); 
         // Release the jar resources
         jarFile.close();
 	}
 	
-	void unloadBundle(Path bundlePath) {
+	void unloadBundle(Path bundlePath) 
+	{
 		Plugin plugin = this.pathToPlugin.remove(bundlePath);
 		if(plugin != null) {
 			this.core.removePlugin(plugin.getId());
 		}
+	}
+	
+	public ActionListener AddListener()
+	{
+		return new ActionListener() 
+		{
+			@Override
+			public void actionPerformed(ActionEvent e) 
+			{
+				final JFileChooser choice = new JFileChooser(); 
+				int val = choice.showOpenDialog(core.getAddButton()); 
+				File file = choice.getSelectedFile(); 
+				try 
+				{
+					loadBundle(file.toPath());
+				} 
+				catch (Exception e1) 
+				{
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}
+			}
+			
+		};
+	}
+	
+	public ActionListener RemoveListener()
+	{
+		return new ActionListener()
+		{
+			@SuppressWarnings("deprecation")
+			@Override
+			public void actionPerformed(ActionEvent e)
+			{
+			 Plugin p = (Plugin) core.pluginMap().get(javax.swing.JOptionPane.showInputDialog("Remove which Plugin?"));
+			 unloadBundle(idToPath.get(p.getId())); 
+			}
+		};
 	}
 }
