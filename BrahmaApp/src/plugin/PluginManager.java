@@ -69,6 +69,11 @@ public class PluginManager implements Runnable {
         
         // Get hold of the Plugin-Class attribute and load the class
         String className = mainAttribs.getValue("Plugin-Class");
+        if (className==null) {
+        	System.out.println("invalid plugin Detected");
+        	jarFile.close();
+			return;
+		}
         URL[] urls = new URL[]{bundlePath.toUri().toURL()};
         ClassLoader classLoader = new URLClassLoader(urls);
         Class<?> pluginClass = classLoader.loadClass(className);
