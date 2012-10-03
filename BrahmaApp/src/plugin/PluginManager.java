@@ -25,6 +25,7 @@ public class PluginManager implements Runnable {
 	public PluginManager(PluginCore core) throws IOException {
 		this.core = core;
 		this.pathToPlugin = new HashMap<Path, Plugin>();
+		this.idToPath = new HashMap<String, Path>(); 
 		watchDir = new WatchDir(this, FileSystems.getDefault().getPath("plugins"), false);
 	}
 
@@ -36,7 +37,8 @@ public class PluginManager implements Runnable {
 			File pluginFolder = pluginDir.toFile();
 			File[] files = pluginFolder.listFiles();
 			if(files != null) {
-				for(File f : files) {
+				for(File f : files) 
+				{
 					this.loadBundle(f.toPath());
 				}
 			}
