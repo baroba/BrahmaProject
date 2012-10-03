@@ -54,7 +54,14 @@ public class PluginManager implements Runnable {
 	void loadBundle(Path bundlePath) throws Exception {
 		// Get hold of the jar file
 		File jarBundle = bundlePath.toFile();
-		JarFile jarFile = new JarFile(jarBundle);
+		JarFile jarFile;
+		try{
+			jarFile= new JarFile(jarBundle);
+			
+		}catch(Exception e){
+			System.out.println("invalid plugin Detected");
+			return;
+		}
 		
 		// Get the manifest file in the jar file
 		Manifest mf = jarFile.getManifest();
