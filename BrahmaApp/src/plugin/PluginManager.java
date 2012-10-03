@@ -14,8 +14,6 @@ import java.util.jar.JarFile;
 import java.util.jar.Manifest;
 
 import javax.swing.JFileChooser;
-import javax.swing.JFrame;
-import javax.swing.JPanel;
 
 public class PluginManager implements Runnable {
 	private PluginCore core;
@@ -103,7 +101,7 @@ public class PluginManager implements Runnable {
 			public void actionPerformed(ActionEvent e) 
 			{
 				final JFileChooser choice = new JFileChooser(); 
-				int val = choice.showOpenDialog(core.getAddButton()); 
+				choice.showOpenDialog(core.getAddButton()); 
 				File file = choice.getSelectedFile(); 
 				try 
 				{
@@ -123,7 +121,6 @@ public class PluginManager implements Runnable {
 	{
 		return new ActionListener()
 		{
-			@SuppressWarnings("deprecation")
 			@Override
 			public void actionPerformed(ActionEvent e)
 			{
