@@ -10,7 +10,8 @@ public class Brahma {
 			core.addAddActionListener(pluginManager.AddListener());
 			core.addRemoveActionListener(pluginManager.RemoveListener());
 		}
-		catch(Exception e) {
+		catch(Exception e) 
+		{
 			e.printStackTrace();
 		}
 		Thread thread = new Thread(pluginManager);

@@ -20,7 +20,8 @@ public class PluginManager implements Runnable {
 	private WatchDir watchDir;
 	private HashMap<Path, Plugin> pathToPlugin;
 	private HashMap<String, Path> idToPath; 
-	public PluginManager(PluginCore core) throws IOException {
+	public PluginManager(PluginCore core) throws IOException 
+	{
 		this.core = core;
 		this.pathToPlugin = new HashMap<Path, Plugin>();
 		this.idToPath = new HashMap<String, Path>(); 
@@ -53,10 +54,13 @@ public class PluginManager implements Runnable {
 		// Get hold of the jar file
 		File jarBundle = bundlePath.toFile();
 		JarFile jarFile;
-		try{
+		try
+		{
 			jarFile= new JarFile(jarBundle);
 			
-		}catch(Exception e){
+		}
+		catch(Exception e)
+		{
 			System.out.println("invalid plugin Detected");
 			return;
 		}
@@ -67,7 +71,8 @@ public class PluginManager implements Runnable {
         
         // Get hold of the Plugin-Class attribute and load the class
         String className = mainAttribs.getValue("Plugin-Class");
-        if (className==null) {
+        if (className==null) 
+        {
         	System.out.println("invalid plugin Detected");
         	jarFile.close();
 			return;
@@ -116,6 +121,8 @@ public class PluginManager implements Runnable {
 			
 		};
 	}
+	
+	
 	
 	public ActionListener RemoveListener()
 	{

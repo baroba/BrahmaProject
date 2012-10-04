@@ -58,21 +58,27 @@ public class WatchDir {
     private PluginManager manager;
 
     @SuppressWarnings("unchecked")
-    static <T> WatchEvent<T> cast(WatchEvent<?> event) {
+    static <T> WatchEvent<T> cast(WatchEvent<?> event) 
+    {
         return (WatchEvent<T>)event;
     }
 
     /**
      * Register the given directory with the WatchService
      */
-    private void register(Path dir) throws IOException {
+    private void register(Path dir) throws IOException 
+    {
         WatchKey key = dir.register(watcher, ENTRY_CREATE, ENTRY_DELETE, ENTRY_MODIFY);
-        if (trace) {
+        if (trace) 
+        {
             Path prev = keys.get(key);
             if (prev == null) {
                 System.out.format("register: %s\n", dir);
-            } else {
-                if (!dir.equals(prev)) {
+            } 
+            else 
+            {
+                if (!dir.equals(prev)) 
+                {
                     System.out.format("update: %s -> %s\n", prev, dir);
                 }
             }
@@ -84,9 +90,11 @@ public class WatchDir {
      * Register the given directory, and all its sub-directories, with the
      * WatchService.
      */
-    private void registerAll(final Path start) throws IOException {
+    private void registerAll(final Path start) throws IOException 
+    {
         // register directory and sub-directories
-        Files.walkFileTree(start, new SimpleFileVisitor<Path>() {
+        Files.walkFileTree(start, new SimpleFileVisitor<Path>() 
+        {
             @Override
             public FileVisitResult preVisitDirectory(Path dir, BasicFileAttributes attrs)
                 throws IOException
@@ -100,17 +108,21 @@ public class WatchDir {
     /**
      * Creates a WatchService and registers the given directory
      */
-    WatchDir(PluginManager manager, Path dir, boolean recursive) throws IOException {
+    WatchDir(PluginManager manager, Path dir, boolean recursive) throws IOException 
+    {
     	this.manager = manager;
         this.watcher = FileSystems.getDefault().newWatchService();
         this.keys = new HashMap<WatchKey,Path>();
         this.recursive = recursive;
 
-        if (recursive) {
+        if (recursive) 
+        {
             System.out.format("Scanning %s ...\n", dir);
             registerAll(dir);
             System.out.println("Done.");
-        } else {
+        } 
+        else 
+        {
             register(dir);
         }
 
@@ -121,28 +133,36 @@ public class WatchDir {
     /**
      * Process all events for keys queued to the watcher
      */
-    void processEvents() {
-        for (;;) {
+    void processEvents() 
+    {
+        for (;;) 
+        {
 
             // wait for key to be signalled
             WatchKey key;
-            try {
+            try 
+            {
                 key = watcher.take();
-            } catch (InterruptedException x) {
+            }
+            catch (InterruptedException x) 
+            {
                 return;
             }
 
             Path dir = keys.get(key);
-            if (dir == null) {
+            if (dir == null) 
+            {
                 System.err.println("WatchKey not recognized!!");
                 continue;
             }
 
-            for (WatchEvent<?> event: key.pollEvents()) {
+            for (WatchEvent<?> event: key.pollEvents()) 
+            {
                 WatchEvent.Kind kind = event.kind();
 
                 // TBD - provide example of how OVERFLOW event is handled
-                if (kind == OVERFLOW) {
+                if (kind == OVERFLOW) 
+                {
                     continue;
                 }
 
@@ -155,7 +175,8 @@ public class WatchDir {
                 System.out.format("%s: %s\n", event.kind().name(), child);
                 
                 // C.R. Changes
-            	if(this.manager != null) {
+            	if(this.manager != null) 
+            	{
             		try {
                         if(kind == ENTRY_CREATE) {
                         	this.manager.loadBundle(child);
@@ -164,19 +185,24 @@ public class WatchDir {
                         	this.manager.unloadBundle(child);
                         }
             		}
-            		catch(Exception e) {
+            		catch(Exception e) 
+            		{
             			e.printStackTrace();
             		}
             	}
 
                 // if directory is created, and watching recursively, then
                 // register it and its sub-directories
-                if (recursive && (kind == ENTRY_CREATE)) {
+                if (recursive && (kind == ENTRY_CREATE)) 
+                {
                     try {
-                        if (Files.isDirectory(child, NOFOLLOW_LINKS)) {
+                        if (Files.isDirectory(child, NOFOLLOW_LINKS)) 
+                        {
                             registerAll(child);
                         }
-                    } catch (IOException x) {
+                    } 
+                    catch (IOException x) 
+                    {
                         // ignore to keep sample readbale
                     }
                 }
@@ -184,18 +210,21 @@ public class WatchDir {
 
             // reset key and remove from set if directory no longer accessible
             boolean valid = key.reset();
-            if (!valid) {
+            if (!valid) 
+            {
                 keys.remove(key);
 
                 // all directories are inaccessible
-                if (keys.isEmpty()) {
+                if (keys.isEmpty()) 
+                {
                     break;
                 }
             }
         }
     }
     
-    static void usage() {
+    static void usage() 
+    {
         System.err.println("usage: java WatchDir [-r] dir");
         System.exit(-1);
     }
